@@ -67,11 +67,22 @@ export default function AboutPage() {
             <Image src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80" alt="Fresh milk" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
         </div>
+
+        <div className="story-grid">
+          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <Image src="https://images.unsplash.com/photo-1628088062854-d1871b0cdd8a?auto=format&fit=crop&w=900&q=80" alt="Milk delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
+          </motion.div>
+          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
+            <span className="kicker">Our promise</span>
+            <h2>Reliable delivery,<br />every time.</h2>
+            <p>We deliver between 5:30 AM and 8:00 AM, so you always have fresh milk ready for your morning tea or coffee.</p>
+          </motion.div>
+        </div>
       </section>
 
       <footer>
         <Link className="brand footer-brand" href="/">
-          <BottleIcon />
+          <Image src="/logo.png" alt="The Milkman logo" width={40} height={40} className="brand-logo" priority />
           <span>The Milkman</span>
         </Link>
         <p>Fresh milk. Friendly service. Every day.</p>

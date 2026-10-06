@@ -55,11 +55,22 @@ export default function ContactPage() {
             <Image src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=900&q=80" alt="Contact us" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
         </div>
+
+        <div className="story-grid reverse">
+          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+            <Image src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=80" alt="Delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
+          </motion.div>
+          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
+            <span className="kicker">Fast response</span>
+            <h2>We respond quickly</h2>
+            <p>Message us on WhatsApp for fast ordering and support. We typically respond within minutes during business hours.</p>
+          </motion.div>
+        </div>
       </section>
 
       <footer>
         <Link className="brand footer-brand" href="/">
-          <BottleIcon />
+          <Image src="/logo.png" alt="The Milkman logo" width={40} height={40} className="brand-logo" priority />
           <span>The Milkman</span>
         </Link>
         <p>Fresh milk. Friendly service. Every day.</p>
