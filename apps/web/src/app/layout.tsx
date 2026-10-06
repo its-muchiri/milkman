@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { DM_Sans, DM_Serif_Display } from 'next/font/google';
+import Image from 'next/image';
 import './globals.css';
 
 const dmSans = DM_Sans({
@@ -37,6 +38,9 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  icons: {
+    icon: '/the-milkman-reference.png',
   },
 };
 
