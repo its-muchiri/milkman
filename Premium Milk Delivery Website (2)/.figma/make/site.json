@@ -1,0 +1,10 @@
+{
+  "description": "Offers premium milk delivery with a sleek editorial and glassmorphism design, providing users a seamless and stylish way to order fresh milk online.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

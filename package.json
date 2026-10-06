@@ -1,0 +1,21 @@
+{
+  "name": "milkman",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The Milkman — fresh milk delivery platform in Kenya. Phase 1 foundation.",
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "packages/shared"
+  ],
+  "scripts": {
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "build:shared": "npm run build -w @milkman/shared",
+    "test:shared": "npm run test -w @milkman/shared",
+    "migrate": "npm run migrate -w api",
+    "seed": "npm run seed -w api",
+    "dev:api": "npm run dev -w api",
+    "build": "npm run build -w @milkman/shared && npm run build -w api"
+  }
+}
