@@ -17,8 +17,27 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'The Milkman',
-  description: 'Fresh by 6 AM. Fifty shillings. That is the whole idea.',
+  title: 'The Milkman — Fresh Milk Delivery in Kutus, Kirinyaga',
+  description: 'Fresh milk delivered to your doorstep in Kutus, Kirinyaga. Order between 8:00 AM and 10:00 PM for next-morning delivery. KSh 50 per pack.',
+  keywords: ['milk delivery', 'Kutus', 'Kirinyaga', 'fresh milk', 'Kenya', 'M-Pesa', 'The Milkman'],
+  authors: [{ name: 'The Milkman' }],
+  openGraph: {
+    title: 'The Milkman — Fresh Milk Delivery',
+    description: 'Fresh milk delivered to your doorstep in Kutus, Kirinyaga. Order between 8:00 AM and 10:00 PM for next-morning delivery.',
+    url: 'https://milkman-xi.vercel.app',
+    siteName: 'The Milkman',
+    locale: 'en_KE',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'The Milkman — Fresh Milk Delivery',
+    description: 'Fresh milk delivered to your doorstep in Kutus, Kirinyaga.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

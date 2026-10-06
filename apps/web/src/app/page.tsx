@@ -1,9 +1,24 @@
 'use client';
 
-import { useState, useId } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import Image from 'next/image';
-import { PACK_PRICE_KSH, TIMEZONE, ORDER_REFERENCE_PREFIX } from '@milkman/shared';
-import { normalizeKePhone, isValidKePhone } from '@milkman/shared';
+import dynamic from 'next/dynamic';
+import {
+  PACK_PRICE_KSH,
+  TIMEZONE,
+  ORDER_REFERENCE_PREFIX,
+} from '@milkman/shared';
+import { normalizeKePhone, isValidKePhone, checkGeofence } from '@milkman/shared';
+import type { GeofenceResult } from '@milkman/shared';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, useInView } from 'framer-motion';
+
+const MilkPackScene = dynamic(() => import('./_milk-3d').then((m) => m.MilkPackScene), { ssr: false });
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 function ArrowIcon() {
   return (
@@ -72,7 +87,25 @@ type Confirmation = {
   packs: number;
   total: number;
   location: string;
+  lat?: number;
+  lng?: number;
 };
+
+function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.7, delay, ease: 'easeOut' }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function Home() {
   const [packs, setPacks] = useState(1);
@@ -81,12 +114,107 @@ export default function Home() {
   const [location, setLocation] = useState('');
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selectedLatLng, setSelectedLatLng] = useState<{ lat: number; lng: number } | null>(null);
+  const [geofenceResult, setGeofenceResult] = useState<GeofenceResult | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [mapLoading, setMapLoading] = useState(true);
 
   const honeypotFieldId = useId();
   const total = packs * PACK_PRICE_KSH;
   const phoneError = phone ? (!isValidKePhone(phone) ? 'Enter a valid Kenyan mobile number' : '') : '';
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || typeof window === 'undefined') {
+      setMapError('Google Maps API key not configured');
+      return;
+    }
+
+    const setOptions = (window as unknown as { google: { maps: { setOptions: (opts: { key: string; version: string }) => void; importLibrary: (lib: string) => Promise<unknown> } } }).google.maps.setOptions;
+    if (setOptions) {
+      setOptions({ key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY, version: 'weekly' });
+    }
+
+    const importLib = (window as unknown as { google: { maps: { importLibrary: (lib: string) => Promise<unknown> } } }).google.maps.importLibrary;
+    if (!importLib) {
+      setMapError('Google Maps library not available');
+      return;
+    }
+
+    importLib('maps')
+      .then(() => {
+        setMapLoaded(true);
+        setMapLoading(false);
+      })
+      .catch((err) => {
+        console.error('Google Maps load error', err);
+        setMapError('Failed to load map');
+        setMapLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!mapLoaded || !mapRef.current || !window.google) return;
+
+    const map = new window.google.maps.Map(mapRef.current, {
+      center: { lat: -0.5667, lng: 37.2833 },
+      zoom: 12,
+      disableDefaultUI: false,
+      clickableIcons: true,
+    });
+
+    const marker = new window.google.maps.Marker({
+      position: { lat: -0.5667, lng: 37.2833 },
+      map,
+      draggable: true,
+      title: 'Delivery location',
+    });
+
+    const updateFromLatLng = (lat: number, lng: number) => {
+      setSelectedLatLng({ lat, lng });
+      marker.setPosition({ lat, lng });
+      const fence = checkGeofence({ lat, lng }, { lat: -0.5667, lng: 37.2833 });
+      setGeofenceResult(fence);
+      setLocation(`Map pin (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
+    };
+
+    map.addListener('click', (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) updateFromLatLng(e.latLng.lat(), e.latLng.lng());
+    });
+
+    marker.addListener('dragend', () => {
+      const pos = marker.getPosition();
+      if (pos) updateFromLatLng(pos.lat(), pos.lng());
+    });
+  }, [mapLoaded]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray('.animate-on-scroll').forEach((el) => {
+        gsap.fromTo(
+          el as HTMLElement,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el as HTMLElement,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   function validate(): boolean {
     const next: Record<string, string> = {};
@@ -131,11 +259,42 @@ export default function Home() {
         packs,
         total,
         location: location.trim(),
+        lat: selectedLatLng?.lat,
+        lng: selectedLatLng?.lng,
       });
     } catch (err) {
       setErrors({ form: err instanceof Error ? err.message : 'Something went wrong' });
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function payWithMpesa() {
+    if (!confirmation) return;
+    setPaying(true);
+
+    try {
+      const res = await fetch('/api/daraja/stk-push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: confirmation.phone,
+          amount: confirmation.total,
+          reference: confirmation.reference,
+          accountRef: `MLK-${confirmation.reference}`,
+        }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Payment failed');
+      }
+
+      alert('STK Push sent to your phone. Complete the payment to confirm your order.');
+    } catch (err) {
+      setErrors({ form: err instanceof Error ? err.message : 'Payment failed' });
+    } finally {
+      setPaying(false);
     }
   }
 
@@ -147,6 +306,8 @@ export default function Home() {
     setNote('');
     setConfirmation(null);
     setErrors({});
+    setSelectedLatLng(null);
+    setGeofenceResult(null);
   }
 
   function goToOrder() {
@@ -187,6 +348,10 @@ export default function Home() {
                 {confirmation.packs} pack(s) · KSh {confirmation.total} · {confirmation.location}
               </p>
               <div className="confirmation-actions">
+                <button className="primary-button" type="button" onClick={payWithMpesa} disabled={paying}>
+                  <MpesaIcon />
+                  <span>{paying ? 'Requesting payment...' : 'Pay with M-Pesa'}</span>
+                </button>
                 <a
                   className="primary-button whatsapp-button"
                   href={`https://wa.me/?text=${whatsappText}`}
@@ -202,8 +367,20 @@ export default function Home() {
                 </button>
               </div>
             </div>
+
+            <div className="illustration-wrap">
+              <div className="sun-disc" />
+              <div className="hero-3d">
+                <MilkPackScene />
+              </div>
+              <div className="vintage-stamp">
+                <span>Fresh</span>
+                <BottleIcon />
+                <span>Daily</span>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
       </main>
     );
   }
@@ -241,13 +418,9 @@ export default function Home() {
 
           <div className="illustration-wrap">
             <div className="sun-disc" />
-            <Image
-              src="/the-milkman-reference.png"
-              alt="Vintage illustration of a milkman carrying bottles"
-              width={420}
-              height={600}
-              className="illustration-img"
-            />
+            <div className="hero-3d">
+              <MilkPackScene />
+            </div>
             <div className="vintage-stamp">
               <span>Fresh</span>
               <BottleIcon />
@@ -272,24 +445,24 @@ export default function Home() {
       </section>
 
       <section className="how-it-works">
-        <div className="section-heading">
+        <div className="section-heading animate-on-scroll">
           <span>Good milk, no fuss</span>
           <h2>A simple daily service.</h2>
         </div>
         <div className="steps">
-          <article>
+          <article className="animate-on-scroll">
             <span className="step-number">01</span>
             <BottleIcon />
             <h3>Choose your milk</h3>
             <p>Pick the number of packs and confirm your details.</p>
           </article>
-          <article>
+          <article className="animate-on-scroll">
             <span className="step-number">02</span>
             <ClockIcon />
             <h3>Order on time</h3>
             <p>Send your order between 8:00 AM and 10:00 PM.</p>
           </article>
-          <article>
+          <article className="animate-on-scroll">
             <span className="step-number">03</span>
             <ArrowIcon />
             <h3>We deliver</h3>
@@ -299,7 +472,7 @@ export default function Home() {
       </section>
 
       <section className="order-section" id="order">
-        <div className="order-intro">
+        <div className="order-intro animate-on-scroll">
           <span className="small-label">Today&apos;s milk round</span>
           <h2>
             Milk at
@@ -319,7 +492,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="order-card">
+        <div className="order-card animate-on-scroll">
           <form className="order-form" onSubmit={submitOrder} noValidate>
             <div className="order-card-head">
               <span>Order milk here</span>
@@ -357,10 +530,21 @@ export default function Home() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Estate, landmark, or address in Kutus"
+                  placeholder="Tap the map or type a landmark"
                 />
                 {errors.location && <em className="field-error">{errors.location}</em>}
               </label>
+
+              <div className="map-wrap">
+                <div ref={mapRef} className="map-canvas" />
+                {mapLoading && <p className="map-loading">Loading map...</p>}
+                {mapError && <p className="map-error">{mapError}</p>}
+                {geofenceResult && (
+                  <div className="geofence-badge">
+                    {geofenceResult.distanceKm.toFixed(1)} km · {geofenceResult.zone.replace('_', ' ')} · {geofenceResult.vehicle}
+                  </div>
+                )}
+              </div>
 
               <label className="field">
                 <span>Packs</span>
@@ -399,14 +583,25 @@ export default function Home() {
               <strong>KSh {total}</strong>
             </div>
 
-            <button
-              className={`checkout-button ${submitting ? 'submitting' : ''}`}
-              type="submit"
-              disabled={submitting}
-            >
-              <span>{submitting ? 'Placing order...' : 'Order milk'}</span>
-              <ArrowIcon />
-            </button>
+            <div className="payment-row">
+              <button
+                className={`checkout-button ${submitting ? 'submitting' : ''}`}
+                type="submit"
+                disabled={submitting}
+              >
+                <span>{submitting ? 'Placing order...' : 'Order milk'}</span>
+                <ArrowIcon />
+              </button>
+              <button
+                className={`checkout-button mpesa-button ${paying ? 'submitting' : ''}`}
+                type="button"
+                disabled={!location || packs < 1}
+                onClick={payWithMpesa}
+              >
+                <MpesaIcon />
+                <span>{paying ? 'Requesting STK Push...' : 'Pay with M-Pesa Pochi'}</span>
+              </button>
+            </div>
 
             <p className="order-note">
               Orders are locked for next-morning delivery between 5:30 AM and 8:00 AM.
@@ -430,6 +625,57 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="story-section">
+        <div className="story-grid">
+          <div className="story-image animate-on-scroll">
+            <Image
+              src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80"
+              alt="Fresh milk bottles on a wooden table"
+              fill
+              sizes="(min-width: 900px) 45vw, 90vw"
+              priority
+            />
+          </div>
+          <div className="story-copy animate-on-scroll">
+            <span className="kicker">Morning fresh</span>
+            <h2>
+              From the dairy,
+              <br />
+              to your doorstep.
+            </h2>
+            <p>
+              We work with local dairy farmers around Kirinyaga to bring you
+              fresh, clean milk every morning. No middlemen, no long supply
+              chains — just good milk.
+            </p>
+          </div>
+        </div>
+
+        <div className="story-grid reverse">
+          <div className="story-copy animate-on-scroll">
+            <span className="kicker">Simple ordering</span>
+            <h2>
+              Fifty shillings,
+              <br />
+              that is the whole idea.
+            </h2>
+            <p>
+              One standard pack, one fixed price. Order between 8:00 AM and
+              10:00 PM, and we deliver before 8:00 AM the next day.
+            </p>
+          </div>
+          <div className="story-image animate-on-scroll">
+            <Image
+              src="https://images.unsplash.com/photo-1628088062854-d1871b0cdd8a?auto=format&fit=crop&w=900&q=80"
+              alt="A milk delivery rider on a bicycle"
+              fill
+              sizes="(min-width: 900px) 45vw, 90vw"
+              priority
+            />
+          </div>
+        </div>
+      </section>
+
       <footer>
         <a className="brand footer-brand" href="#home">
           <BottleIcon />
@@ -439,6 +685,8 @@ export default function Home() {
         <div className="footer-meta">
           <span>8:00 AM — 10:00 PM</span>
           <span>Kutus · Kirinyaga · Kenya</span>
+          <a className="footer-legal" href="/privacy">Privacy</a>
+          <a className="footer-legal" href="/terms">Terms</a>
         </div>
       </footer>
     </main>
