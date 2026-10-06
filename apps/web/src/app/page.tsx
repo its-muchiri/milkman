@@ -51,6 +51,7 @@ export default function Home() {
   const [phone, setPhone] = useState('');
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const heroRef = useRef<HTMLDivElement>(null);
@@ -145,6 +146,36 @@ export default function Home() {
       `Hello, I want to order ${packs} pack(s) from ${selectedLocation}. Total: KSh ${total}. Phone: ${phone}`
     );
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+  }
+
+  async function initiateMpesaPayment() {
+    if (!confirmation) return;
+    setPaying(true);
+    setErrors({});
+
+    try {
+      const res = await fetch('/api/daraja/pochi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: phone.trim(),
+          amount: total,
+          accountReference: confirmation,
+        }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Payment initiation failed');
+      }
+
+      const data = (await res.json()) as { CustomerMessage?: string };
+      setErrors({ payment: data.CustomerMessage || 'Check your phone for the STK Push prompt.' });
+    } catch (err) {
+      setErrors({ payment: err instanceof Error ? err.message : 'Payment initiation failed' });
+    } finally {
+      setPaying(false);
+    }
   }
 
   function resetOrder() {
@@ -373,12 +404,16 @@ export default function Home() {
                 <span>KSh {total}</span>
               </div>
               <div className="payment-options">
-                <button className="checkout-button mpesa-button" type="button" onClick={sendToWhatsApp}>
+                <button className="checkout-button mpesa-button" type="button" onClick={initiateMpesaPayment} disabled={paying}>
                   <WhatsAppIcon />
-                  <span>Pay via WhatsApp</span>
+                  <span>{paying ? 'Processing...' : 'Pay with M-Pesa'}</span>
                 </button>
+                <button className="checkout-button secondary-button" type="button" onClick={sendToWhatsApp}>
+                  <span>Chat on WhatsApp</span>
+                </button>
+                {errors.payment && <p className="field-error">{errors.payment}</p>}
                 <p className="payment-hint">
-                  Send order details to <strong>+254 715 673 960</strong> on WhatsApp to complete payment via M-Pesa Pochi la Biashara.
+                  Pay via M-Pesa Pochi la Biashara or chat with us on WhatsApp.
                 </p>
               </div>
             </motion.div>
