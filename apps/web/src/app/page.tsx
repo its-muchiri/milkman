@@ -309,7 +309,7 @@ export default function Home() {
               <strong>8:00 AM — 10:00 PM daily · EAT</strong>
             </span>
           </div>
-        </div>
+        </motion.div>
 
         <motion.div className="order-card animate-on-scroll" variants={scaleIn} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }}>
           {step === 'location' && (
