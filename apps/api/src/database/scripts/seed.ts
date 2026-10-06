@@ -225,7 +225,7 @@ async function main(): Promise<void> {
           paymentStatus: 'pending',
           packs: s.packs,
           totalKsh: total,
-          deliveryPoint: geo(address.point) as never,
+          deliveryPoint: address.point,
           zone: fence.zone,
           vehicle: fence.vehicle,
           deliveryDate,
