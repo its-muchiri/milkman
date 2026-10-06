@@ -9,6 +9,8 @@ import { UsersModule } from './users/users.module';
 import { AuditModule } from './audit/audit.module';
 import { HealthModule } from './health/health.module';
 import { OrdersModule } from './orders/orders.module';
+import { PaymentsModule } from './payments/payments.module';
+import { DarajaModule } from './daraja/daraja.module';
 
 const envCandidates = [
   path.resolve(__dirname, '../../../.env'),
@@ -23,6 +25,8 @@ const envCandidates = [
     AuthModule,
     UsersModule,
     OrdersModule,
+    PaymentsModule,
+    DarajaModule,
     AuditModule,
     HealthModule,
   ],
