@@ -47,8 +47,8 @@ export default function AboutPage() {
 
       <section className="story-section">
         <div className="story-grid">
-          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <Image src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=900&q=80" alt="Dairy farm" fill sizes="(min-width: 900px) 45vw, 90vw" />
+          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.8 }}>
+            <Image src="/images.jpg" alt="Dairy farm" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
           <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
             <span className="kicker">Local farmers</span>
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
         <div className="story-grid">
           <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <Image src="https://images.unsplash.com/photo-1628088062854-d1871b0cdd8a?auto=format&fit=crop&w=900&q=80" alt="Milk delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
+            <Image src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80" alt="Milk delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
           <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
             <span className="kicker">Our promise</span>

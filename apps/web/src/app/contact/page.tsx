@@ -51,14 +51,14 @@ export default function ContactPage() {
             <p><strong>Area:</strong> Kutus, Kirinyaga, Kenya</p>
             <p>We deliver to Diaspora, Mjini Soko, Mjini Town, Ngomongo, Executive, D8, and Exit 9.</p>
           </motion.div>
-          <motion.div className="story-image" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <Image src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=900&q=80" alt="Contact us" fill sizes="(min-width: 900px) 45vw, 90vw" />
+          <motion.div className="story-image" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.8 }}>
+            <Image src="/images-1.jpg" alt="Contact us" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
         </div>
 
         <div className="story-grid reverse">
-          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <Image src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=80" alt="Delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
+          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.8 }}>
+            <Image src="/poster.png" alt="Delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
           <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
             <span className="kicker">Fast response</span>

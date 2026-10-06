@@ -59,6 +59,7 @@ export default function Home() {
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, -150]);
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const orderY = useTransform(scrollY, [0, 500], [100, -50]);
 
   const total = packs * 50;
 
@@ -239,7 +240,7 @@ export default function Home() {
             <div className="sun-disc" />
             <div className="hero-3d">
               <div className="hero-3d-placeholder" aria-hidden="true">
-                <Image src="/logo.png" alt="The Milkman" width={300} height={300} className="hero-logo-img" priority />
+                <Image src="/poster.png" alt="The Milkman" width={300} height={300} className="hero-logo-img" priority />
               </div>
             </div>
             <div className="vintage-stamp">
@@ -275,9 +276,9 @@ export default function Home() {
           {[
             { num: '01', icon: <BottleIcon />, title: 'Choose your milk', desc: 'Pick the number of packs and confirm your details.', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80' },
             { num: '02', icon: <WhatsAppIcon />, title: 'Order on time', desc: 'Send your order between 8:00 AM and 10:00 PM.', img: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80' },
-            { num: '03', icon: <ArrowIcon />, title: 'We deliver', desc: 'We confirm your details and bring it to you in Kutus.', img: 'https://images.unsplash.com/photo-1628088062854-d1871b0cdd8a?auto=format&fit=crop&w=600&q=80' },
+            { num: '03', icon: <ArrowIcon />, title: 'We deliver', desc: 'We confirm your details and bring it to you in Kutus.', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80' },
           ].map((step, i) => (
-            <motion.article key={step.num} className="animate-on-scroll" custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}>
+            <motion.article key={step.num} className="animate-on-scroll" custom={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }} variants={fadeIn}>
               <span className="step-number">{step.num}</span>
               <div className="step-image">
                 <Image src={step.img} alt={step.title} fill sizes="(min-width: 900px) 300px, 80vw" />
@@ -292,7 +293,7 @@ export default function Home() {
 
       {/* ── ORDER FORM ─────────────────────────────────────────────── */}
       <section className="order-section" id="order" ref={orderRef}>
-        <div className="order-intro animate-on-scroll">
+        <motion.div className="order-intro animate-on-scroll" style={{ y: orderY }}>
           <span className="small-label">Today&apos;s milk round</span>
           <div className="order-intro-image">
             <Image src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=800&q=80" alt="Fresh milk" fill sizes="(min-width: 900px) 40vw, 90vw" />
@@ -310,7 +311,7 @@ export default function Home() {
           </div>
         </div>
 
-        <motion.div className="order-card animate-on-scroll" variants={scaleIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+        <motion.div className="order-card animate-on-scroll" variants={scaleIn} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }}>
           {step === 'location' && (
             <motion.div className="order-step" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
               <div className="order-card-head">
@@ -390,10 +391,10 @@ export default function Home() {
       {/* ── STORY SECTION ─────────────────────────────────────────── */}
       <section className="story-section">
         <div className="story-grid">
-          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.8 }}>
             <Image src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80" alt="Fresh milk bottles" fill sizes="(min-width: 900px) 45vw, 90vw" priority />
           </motion.div>
-          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
+          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7, delay: 0.2 }}>
             <span className="kicker">Morning fresh</span>
             <h2>From the dairy,<br />to your doorstep.</h2>
             <p>We work with local dairy farmers around Kirinyaga to bring you fresh, clean milk every morning.</p>
@@ -401,21 +402,21 @@ export default function Home() {
         </div>
 
         <div className="story-grid reverse">
-          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
+          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7, delay: 0.2 }}>
             <span className="kicker">Simple ordering</span>
             <h2>Fifty shillings,<br />that is the whole idea.</h2>
             <p>One standard pack, one fixed price. Order between 8:00 AM and 10:00 PM, and we deliver before 8:00 AM the next day.</p>
           </motion.div>
-          <motion.div className="story-image" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <Image src="https://images.unsplash.com/photo-1628088062854-d1871b0cdd8a?auto=format&fit=crop&w=900&q=80" alt="Milk delivery" fill sizes="(min-width: 900px) 45vw, 90vw" priority />
+          <motion.div className="story-image" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.8 }}>
+            <Image src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80" alt="Milk delivery" fill sizes="(min-width: 900px) 45vw, 90vw" priority />
           </motion.div>
         </div>
 
         <div className="story-grid">
-          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.8 }}>
             <Image src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=900&q=80" alt="Dairy farm" fill sizes="(min-width: 900px) 45vw, 90vw" priority />
           </motion.div>
-          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
+          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7, delay: 0.2 }}>
             <span className="kicker">Our process</span>
             <h2>From farm<br />to fridge.</h2>
             <p>We collect fresh milk every morning and deliver it to your doorstep before 8 AM.</p>
@@ -433,11 +434,11 @@ export default function Home() {
           {[
             { title: 'Fresh daily', desc: 'Delivered every morning before 8 AM.', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80' },
             { title: 'Fair price', desc: 'KSh 50 per pack, no hidden costs.', img: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80' },
-            { title: 'Local farmers', desc: 'We source directly from Kirinyaga.', img: 'https://images.unsplash.com/photo-1628088062854-d1871b0cdd8a?auto=format&fit=crop&w=600&q=80' },
+            { title: 'Local farmers', desc: 'We source directly from Kirinyaga.', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80' },
             { title: 'Easy ordering', desc: 'Order via WhatsApp or this form.', img: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80' },
             { title: 'Fast delivery', desc: 'Same-day delivery across Kutus.', img: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80' },
-          ].map((item) => (
-            <motion.div key={item.title} className="horizontal-card" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          ].map((item, i) => (
+            <motion.div key={item.title} className="horizontal-card" initial={{ opacity: 0, y: 40, scale: 0.9 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.6, delay: i * 0.1 }} whileHover={{ y: -6, scale: 1.02 }}>
               <div className="horizontal-card-image">
                 <Image src={item.img} alt={item.title} fill sizes="(min-width: 900px) 320px, 80vw" />
               </div>
@@ -450,7 +451,7 @@ export default function Home() {
 
       {/* ── PARALLAX ─────────────────────────────────────────────── */}
       <section className="parallax-section" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1600&q=80')" }}>
-        <motion.div className="parallax-content" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+        <motion.div className="parallax-content" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-100px' }} transition={{ duration: 0.8 }}>
           <h2>From farm to doorstep,<br />every single day.</h2>
           <p>We believe in fresh, quality milk delivered with care.</p>
         </motion.div>
@@ -465,7 +466,7 @@ export default function Home() {
         <div className="gallery-grid">
           {[
             'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1628088062854-d1871b0cdd8a?auto=format&fit=crop&w=600&q=80',
+            'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
             'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80',
             'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80',
             'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80',
@@ -473,6 +474,52 @@ export default function Home() {
           ].map((src, i) => (
             <motion.div key={src} className="gallery-item" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.1 }}>
               <Image src={src} alt={`Gallery image ${i + 1}`} fill sizes="(min-width: 900px) 300px, 90vw" />
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── GALLERY ─────────────────────────────────────────────────── */}
+      <section className="gallery-section">
+        <div className="section-heading animate-on-scroll">
+          <span>Gallery</span>
+          <h2>Fresh moments.</h2>
+        </div>
+        <div className="gallery-grid">
+          {[
+            'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
+            'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
+            'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80',
+            'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80',
+            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80',
+            'https://images.unsplash.com/photo-1517242027094-631f8c218a0d?auto=format&fit=crop&w=600&q=80',
+          ].map((src, i) => (
+            <motion.div key={src} className="gallery-item" initial={{ opacity: 0, y: 30, scale: 0.95 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.6, delay: i * 0.08 }}>
+              <Image src={src} alt={`Gallery image ${i + 1}`} fill sizes="(min-width: 900px) 300px, 90vw" />
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── PREMIUM FEATURES ────────────────────────────────────────── */}
+      <section className="premium-section">
+        <div className="section-heading animate-on-scroll">
+          <span>Premium service</span>
+          <h2>Quality you can trust.</h2>
+        </div>
+        <div className="premium-grid">
+          {[
+            { title: 'Fresh daily', desc: 'Delivered every morning before 8 AM.', icon: '🥛' },
+            { title: 'Fair price', desc: 'KSh 50 per pack, no hidden costs.', icon: '💰' },
+            { title: 'Local farmers', desc: 'We source directly from Kirinyaga.', icon: '🌾' },
+            { title: 'Easy ordering', desc: 'Order via WhatsApp or this form.', icon: '📱' },
+            { title: 'Fast delivery', desc: 'Same-day delivery across Kutus.', icon: '🚀' },
+            { title: 'Quality tested', desc: 'Every pack is tested and certified.', icon: '✓' },
+          ].map((feature, i) => (
+            <motion.div key={feature.title} className="premium-card" initial={{ opacity: 0, y: 40, scale: 0.9 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-30px' }} transition={{ duration: 0.6, delay: i * 0.1 }} whileHover={{ y: -8, scale: 1.02 }}>
+              <div className="premium-card-icon">{feature.icon}</div>
+              <h3>{feature.title}</h3>
+              <p>{feature.desc}</p>
             </motion.div>
           ))}
         </div>

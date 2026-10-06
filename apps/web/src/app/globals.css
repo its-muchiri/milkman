@@ -1141,8 +1141,11 @@ footer > p {
 .hero-logo-img {
   width: 280px;
   height: 280px;
-  object-fit: contain;
-  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid var(--gold);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
 }
 
 .payment-row {
@@ -1630,6 +1633,10 @@ footer > p {
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .premium-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Gallery ──────────────────────────────────────────────────── */
@@ -1665,6 +1672,62 @@ footer > p {
 
 .gallery-item:hover img {
   transform: scale(1.05);
+}
+
+/* ── Premium Features ─────────────────────────────────────────── */
+.premium-section {
+  padding: 80px clamp(16px, 5vw, 72px);
+  background: var(--mint);
+  border-top: 1px solid var(--line);
+}
+
+.premium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 40px auto 0;
+}
+
+.premium-card {
+  padding: 32px 24px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: 6px 6px 0 var(--gold);
+  text-align: center;
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 10px 10px 0 var(--gold);
+}
+
+.premium-card-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: var(--mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.premium-card h3 {
+  margin: 0 0 10px;
+  font-family: var(--font-playfair), "Playfair Display", serif;
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.premium-card p {
+  margin: 0;
+  color: var(--faded);
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 /* ── Admin Dashboard ──────────────────────────────────────────── */
