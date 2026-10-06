@@ -53,6 +53,8 @@ export default function Home() {
   const [submitting, setSubmitting] = useState(false);
   const [paying, setPaying] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  const [checkoutRequestId, setCheckoutRequestId] = useState<string | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<'pending' | 'success' | 'failed' | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const heroRef = useRef<HTMLDivElement>(null);
   const orderRef = useRef<HTMLDivElement>(null);
@@ -88,6 +90,14 @@ export default function Home() {
 
     return () => ctx.revert();
   }, []);
+
+  useEffect(() => {
+    if (!checkoutRequestId || paymentStatus === 'success' || paymentStatus === 'failed') return;
+    const timer = setInterval(() => {
+      checkPaymentStatus();
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [checkoutRequestId, paymentStatus]);
 
   function validateLocation(): boolean {
     if (!selectedLocation) {
@@ -151,6 +161,7 @@ export default function Home() {
   async function initiateMpesaPayment() {
     if (!confirmation) return;
     setPaying(true);
+    setPaymentStatus('pending');
     setErrors({});
 
     try {
@@ -169,12 +180,38 @@ export default function Home() {
         throw new Error(text || 'Payment initiation failed');
       }
 
-      const data = (await res.json()) as { CustomerMessage?: string };
-      setErrors({ payment: data.CustomerMessage || 'Check your phone for the STK Push prompt.' });
+      const data = (await res.json()) as { CheckoutRequestID?: string; CustomerMessage?: string };
+      if (data.CheckoutRequestID) {
+        setCheckoutRequestId(data.CheckoutRequestID);
+        setErrors({ payment: data.CustomerMessage || 'Check your phone for the STK Push prompt.' });
+      } else {
+        setErrors({ payment: data.CustomerMessage || 'Payment initiated. Check your phone.' });
+      }
     } catch (err) {
+      setPaymentStatus('failed');
       setErrors({ payment: err instanceof Error ? err.message : 'Payment initiation failed' });
     } finally {
       setPaying(false);
+    }
+  }
+
+  async function checkPaymentStatus() {
+    if (!checkoutRequestId) return;
+    try {
+      const res = await fetch(`/api/payments/status/${checkoutRequestId}`);
+      if (!res.ok) {
+        throw new Error('Failed to check payment status');
+      }
+      const data = (await res.json()) as { status?: string };
+      if (data.status === 'paid') {
+        setPaymentStatus('success');
+        setErrors({});
+      } else if (data.status === 'failed') {
+        setPaymentStatus('failed');
+        setErrors({ payment: 'Payment failed. Please try again.' });
+      }
+    } catch (err) {
+      // Silently fail - user can try again
     }
   }
 
@@ -404,17 +441,33 @@ export default function Home() {
                 <span>KSh {total}</span>
               </div>
               <div className="payment-options">
-                <button className="checkout-button mpesa-button" type="button" onClick={initiateMpesaPayment} disabled={paying}>
-                  <WhatsAppIcon />
-                  <span>{paying ? 'Processing...' : 'Pay with M-Pesa'}</span>
-                </button>
-                <button className="checkout-button secondary-button" type="button" onClick={sendToWhatsApp}>
-                  <span>Chat on WhatsApp</span>
-                </button>
-                {errors.payment && <p className="field-error">{errors.payment}</p>}
-                <p className="payment-hint">
-                  Pay via M-Pesa Pochi la Biashara or chat with us on WhatsApp.
-                </p>
+                {paymentStatus === 'success' ? (
+                  <div className="payment-success">
+                    <p>Payment successful! Your order is confirmed.</p>
+                    <p className="payment-ref">Reference: {confirmation}</p>
+                  </div>
+                ) : (
+                  <>
+                    {!checkoutRequestId && (
+                      <button className="checkout-button mpesa-button" type="button" onClick={initiateMpesaPayment} disabled={paying}>
+                        <WhatsAppIcon />
+                        <span>{paying ? 'Processing...' : 'Pay with M-Pesa'}</span>
+                      </button>
+                    )}
+                    {checkoutRequestId && paymentStatus !== 'failed' && (
+                      <button className="checkout-button secondary-button" type="button" onClick={checkPaymentStatus}>
+                        <span>Check payment status</span>
+                      </button>
+                    )}
+                    <button className="checkout-button secondary-button" type="button" onClick={sendToWhatsApp}>
+                      <span>Chat on WhatsApp</span>
+                    </button>
+                    {errors.payment && <p className="field-error">{errors.payment}</p>}
+                    <p className="payment-hint">
+                      Pay via M-Pesa Pochi la Biashara or chat with us on WhatsApp.
+                    </p>
+                  </>
+                )}
               </div>
             </motion.div>
           )}

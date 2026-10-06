@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Param, Get } from '@nestjs/common';
 import { Public } from '../auth/auth.decorators';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -15,10 +15,19 @@ export class PaymentsController {
   }
 
   @Public()
+  @Get('status/:checkoutRequestId')
+  async status(@Param('checkoutRequestId') checkoutRequestId: string) {
+    const payment = await this.payments.findByCheckoutRequestId(checkoutRequestId);
+    return {
+      status: payment.status,
+      mpesaReceipt: payment.mpesaReceipt,
+      amountPaidKsh: payment.amountPaidKsh,
+    };
+  }
+
+  @Public()
   @Post('callback/:checkoutRequestId')
   async callback(@Param('checkoutRequestId') checkoutRequestId: string, @Body() body: Record<string, unknown>) {
-    // This endpoint will be called by M-Pesa Daraja with the payment result
-    // The actual implementation will be in the daraja module, but we provide a basic structure here
     return { received: true };
   }
 }
