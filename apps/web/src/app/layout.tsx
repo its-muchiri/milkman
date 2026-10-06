@@ -8,6 +8,7 @@ const dmSans = DM_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   variable: '--font-dm-sans',
+  display: 'swap',
 });
 
 const dmSerif = DM_Serif_Display({
@@ -15,6 +16,7 @@ const dmSerif = DM_Serif_Display({
   weight: '400',
   variable: '--font-dm-serif',
   style: ['normal', 'italic'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -40,13 +42,19 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: '/the-milkman-reference.png',
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
   },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${dmSerif.variable}`}>
+      <head>
+        <link rel="stylesheet" href="/fonts/playfair-local.css" />
+        <link rel="stylesheet" href="/fonts/cormorant-local.css" />
+      </head>
       <body className={dmSans.className}>{children}</body>
     </html>
   );

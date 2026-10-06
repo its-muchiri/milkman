@@ -37,6 +37,16 @@ function BottleIcon() {
   );
 }
 
+function OrnamentalDivider() {
+  return (
+    <div className="ornament-divider" aria-hidden="true">
+      <span className="ornament-line" />
+      <span className="ornament-diamond">◆</span>
+      <span className="ornament-line" />
+    </div>
+  );
+}
+
 function ClockIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -323,7 +333,7 @@ export default function Home() {
         <section className="hero" id="home">
           <nav className="topbar" aria-label="Main navigation">
             <a className="brand" href="#home" aria-label="The Milkman home">
-              <BottleIcon />
+              <Image src="/logo.png" alt="The Milkman logo" width={40} height={40} className="brand-logo" priority />
               <span>The Milkman</span>
             </a>
             <div className="nav-place">Kutus · Kirinyaga</div>
@@ -340,6 +350,7 @@ export default function Home() {
                 <br />
                 reference
               </h1>
+              <OrnamentalDivider />
               <p className="confirmation-details">
                 {confirmation.name} · {confirmation.phone}
               </p>
@@ -390,7 +401,7 @@ export default function Home() {
       <section className="hero" id="home">
         <nav className="topbar" aria-label="Main navigation">
           <a className="brand" href="#home" aria-label="The Milkman home">
-            <BottleIcon />
+            <Image src="/logo.png" alt="The Milkman logo" width={40} height={40} className="brand-logo" priority />
             <span>The Milkman</span>
           </a>
           <div className="nav-place">Kutus · Kirinyaga</div>
