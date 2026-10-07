@@ -510,6 +510,17 @@ export default function Home() {
             <p>We collect fresh milk every morning and deliver it to your doorstep before 8 AM.</p>
           </motion.div>
         </div>
+
+        <div className="story-grid">
+          <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.8 }}>
+            <Image src="/images.jpg" alt="Local dairy" fill sizes="(min-width: 900px) 45vw, 90vw" priority />
+          </motion.div>
+          <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7, delay: 0.2 }}>
+            <span className="kicker">Our story</span>
+            <h2>Quality you can trust.</h2>
+            <p>We source directly from local farmers in Kirinyaga to ensure the highest quality milk reaches your home.</p>
+          </motion.div>
+        </div>
       </section>
 
       {/* ── HORIZONTAL SCROLL ─────────────────────────────────────── */}
@@ -554,11 +565,11 @@ export default function Home() {
         <div className="gallery-grid">
           {[
             'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
+            '/images.jpg',
             'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80',
+            '/images-1.jpg',
             'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80',
             'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1517242027094-631f8c218a0d?auto=format&fit=crop&w=600&q=80',
           ].map((src, i) => (
             <motion.div key={src} className="gallery-item" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.1 }}>
               <Image src={src} alt={`Gallery image ${i + 1}`} fill sizes="(min-width: 900px) 300px, 90vw" />
@@ -575,12 +586,12 @@ export default function Home() {
         </div>
         <div className="gallery-grid">
           {[
-            'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80',
-            'https://images.unsplash.com/photo-1517242027094-631f8c218a0d?auto=format&fit=crop&w=600&q=80',
+            '/poster.png',
+            '/images.jpg',
+            '/images-1.jpg',
+            '/poster.png',
+            '/images.jpg',
+            '/images-1.jpg',
           ].map((src, i) => (
             <motion.div key={src} className="gallery-item" initial={{ opacity: 0, y: 30, scale: 0.95 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.6, delay: i * 0.08 }}>
               <Image src={src} alt={`Gallery image ${i + 1}`} fill sizes="(min-width: 900px) 300px, 90vw" />
