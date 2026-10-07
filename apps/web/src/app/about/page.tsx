@@ -64,13 +64,13 @@ export default function AboutPage() {
             <p>From the farm to your doorstep, we maintain strict quality controls. Our milk is tested, pasteurized, and packed under hygienic conditions to ensure you get the best.</p>
           </motion.div>
           <motion.div className="story-image" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <Image src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80" alt="Fresh milk" fill sizes="(min-width: 900px) 45vw, 90vw" />
+            <Image src="/images-1.jpg" alt="Fresh milk" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
         </div>
 
         <div className="story-grid">
           <motion.div className="story-image" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <Image src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80" alt="Milk delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
+            <Image src="/poster.png" alt="Milk delivery" fill sizes="(min-width: 900px) 45vw, 90vw" />
           </motion.div>
           <motion.div className="story-copy" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
             <span className="kicker">Our promise</span>
